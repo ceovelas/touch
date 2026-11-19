@@ -20,12 +20,12 @@
   --sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:#E9E9EC;color:var(--ink);font-family:Manrope,-apple-system,"SF Pro Text",system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow:hidden;overscroll-behavior:none}
+html,body{touch-action:manipulation;margin:0;height:100%;background:#E9E9EC;color:var(--ink);font-family:Manrope,-apple-system,"SF Pro Text",system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow:hidden;overscroll-behavior:none}
 button,input,textarea{font:inherit;color:inherit}
 button{border:0;background:none;padding:0;cursor:pointer;-webkit-user-select:none;user-select:none}
 a{color:inherit;text-decoration:none}
 #app{position:fixed;inset:0;max-width:520px;margin:0 auto;overflow:hidden;background:var(--bg);contain:layout paint}
-.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;background:var(--bg);padding:calc(var(--st) + 18px) 20px calc(118px + var(--sb));backface-visibility:hidden}
+.screen{will-change:transform;position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;background:var(--bg);padding:calc(var(--st) + 18px) 20px calc(118px + var(--sb));backface-visibility:hidden}
 .screen.pushed{z-index:30;box-shadow:-14px 0 40px rgba(17,17,19,.10);padding-bottom:calc(40px + var(--sb))}
 .screen::-webkit-scrollbar{display:none}
 .ic{display:block;flex:none}
@@ -112,7 +112,7 @@ a{color:inherit;text-decoration:none}
 
 /* lists and rows */
 .list{display:flex;flex-direction:column}
-.lrow{display:flex;align-items:center;gap:12px;background:#fff;border-radius:24px;box-shadow:var(--sh);padding:13px 14px;margin-bottom:10px;width:100%;text-align:left;transition:transform .2s var(--ease)}
+.lrow{content-visibility:auto;contain-intrinsic-size:auto 88px;display:flex;align-items:center;gap:12px;background:#fff;border-radius:24px;box-shadow:var(--sh);padding:13px 14px;margin-bottom:10px;width:100%;text-align:left;transition:transform .2s var(--ease)}
 button.lrow:active,a.lrow:active{transform:scale(.985)}
 .lmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .lname{font-weight:700;font-size:16px;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -383,7 +383,7 @@ const remote={
   queue:()=>rpc('touch_queue',{p_token:TOKEN}),
   addLead:(tg,ig,name,avatar)=>rpc('touch_add_lead',{p_token:TOKEN,p_tg:tg||'',p_ig:ig||'',p_name:name||null,p_avatar:avatar||null}),
   setSent:(id,sent,ch)=>rpc('touch_set_sent',{p_token:TOKEN,p_id:id,p_sent:sent,p_channel:ch||null}),
-  leads:f=>rpc('touch_leads',{p_token:TOKEN,p_filter:f}),
+  leads:()=>rpc('touch_leads',{p_token:TOKEN,p_filter:'all'}),
   statRows:()=>rpc('touch_stat_rows',{p_token:TOKEN}),
   setStatus:(id,s)=>rpc('touch_set_status',{p_token:TOKEN,p_id:id,p_status:s}),
   update:(id,patch)=>rpc('touch_update_lead',{p_token:TOKEN,p_id:id,p_patch:patch}),
@@ -431,6 +431,13 @@ const demo={
   async tgProfile(u){await sleep(650);const pick=NAMES.find(n=>n[1]===u);return {name:pick?pick[0]:u.replace(/[_.]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()),avatar:null,exists:true}}
 };
 const api=DEMO?demo:remote;
+/* local filtering: the list is loaded once, filters switch with zero network */
+const WEEK=7*864e5;
+const isFresh=l=>l.status==='sent'&&Date.now()-l.sent_at<WEEK;
+const LF={fresh:isFresh,active:l=>l.status==='replied'||l.status==='dialog'||l.status==='call',client:l=>l.status==='client',lost:l=>l.status==='lost',all:l=>l.status!=='new'};
+const leadKeys=l=>{const k=[];if(l.status==='new')return k;k.push('all');for(const f of ['fresh','active','client','lost'])if(LF[f](l))k.push(f);return k};
+const statsMemo={};
+function statsCached(period){const key=period+'|'+(D.rows?D.rows.length:0)+'|'+D.me.tempo+'|'+todayIn(tzOf())+'|'+(D.rowsV||0);return statsMemo[key]||(statsMemo[key]=computeStats(D.rows||[],period,tzOf(),D.me.tempo))}
 
 /* ============ state ============ */
 const D={me:null,queue:null,leads:null,rows:null,filter:'fresh',period:7,qtab:'todo',recent:[],opened:{},pv:null,tgUser:null,setup:{step:'role',role:'setter',code:''},S:null};
@@ -544,13 +551,14 @@ ${solo?'':`<div class="legend"><span><i style="background:#DCDCE1"></i>Отпи�
 <div class="sumline"><span>Из касания в клиента</span><b>${S.cur.client?'1 из '+Math.round(S.cur.sent/S.cur.client):'пока нет'}</b></div></div>`}
   return hero+fun+chans+tiles;
 }
-T.stats=p=>{const role=D.me.role,S=computeStats(D.rows||[],D.period,tzOf(),D.me.tempo);D.S=S;
+T.stats=p=>{const role=D.me.role,S=statsCached(D.period);D.S=S;
   return `${p.pushed?`<header class="top"><button class="roundbtn p" data-act="back" aria-label="Назад">${ic('back',20)}</button><div></div></header>`:'<div style="height:10px"></div>'}
 <h1 class="title">Статистика</h1>${segHTML('period',[['7','7 дней'],['30','30 дней'],['all','Все время']],String(D.period))}<div id="sbody">${statsBody(S,role)}</div>`};
 
 /* ---- leads (owner) ---- */
 const lRow=l=>`<div class="lrow p" role="button" tabindex="0" data-act="lead" data-id="${l.id}" data-lead="${l.id}">${avatar(l,48)}<div class="lmain"><div class="lname">${esc(leadName(l))}</div><div class="chs">${chipHTML(l,'tg',false)}${chipHTML(l,'ig',false)}</div></div>${l.status==='sent'?`<button class="quick p" data-act="quick" data-id="${l.id}">${ic('msg',16,2)}Ответил</button>`:`<span class="spill ${l.status}">${STATUS[l.status]||''}</span>`}</div>`;
-const lList=()=>D.leads.rows.length?D.leads.rows.map(lRow).join(''):empty('Здесь пока пусто','Лиды появятся, когда сеттер начнет писать');
+const leadsView=()=>D.leads.rows.filter(LF[D.filter]||LF.all);
+const lList=()=>{const v=leadsView();return v.length?v.map(lRow).join(''):empty('Здесь пока пусто','Лиды появятся, когда сеттер начнет писать')};
 T.leads=()=>{const c=D.leads.counts,ch=[['fresh','Новые'],['active','В работе'],['client','Клиенты'],['lost','Отказ'],['all','Все']];
   return `<div style="height:10px"></div><h1 class="title">Лиды</h1><div class="sub">Отметь, кто ответил</div>
 <div class="chips" id="chips">${ch.map(x=>`<button class="chip p${D.filter===x[0]?' on':''}" data-act="filter" data-v="${x[0]}">${x[1]}<i>${c[x[0]]||0}</i></button>`).join('')}</div>
@@ -622,9 +630,9 @@ async function go(name,instant){
   if(curTab===name&&curEl){curEl.scrollTo({top:0,behavior:'smooth'});return}
   const el=document.createElement('div');el.className='screen';mount(el,name,{},true);
   const old=curEl;curEl=el;curTab=name;host.appendChild(el);markTab(name);
-  if(old&&!instant){el.animate([{opacity:0,transform:'translate3d(0,14px,0)'},{opacity:1,transform:'none'}],{duration:420,easing:EASE});old.animate([{opacity:1},{opacity:0}],{duration:160,fill:'forwards'}).finished.then(()=>old.remove())}
+  if(old&&!instant){el.animate([{opacity:0,transform:'translate3d(0,14px,0)'},{opacity:1,transform:'none'}],{duration:280,easing:EASE});old.animate([{opacity:1},{opacity:0}],{duration:90,fill:'forwards'}).finished.then(()=>old.remove())}
   else if(old)old.remove();
-  hsel();
+  hsel();setTimeout(()=>silentRefresh(),700);
 }
 async function push(name,params){
   const el=document.createElement('div');el.className='screen pushed';mount(el,name,params,true);app.appendChild(el);
@@ -665,7 +673,7 @@ const sigs={};const same=(k,v)=>{const s=JSON.stringify(v);if(sigs[k]===s)return
 async function loadAll(){
   D.me=await api.me();
   if(D.me.role==='setter'){const[q,r]=await Promise.all([api.queue(),api.statRows()]);D.queue=q;D.rows=r}
-  else{const[l,r]=await Promise.all([api.leads(D.filter),api.statRows()]);D.leads=l;D.rows=r;try{D.queue=null}catch(e){}}
+  else{const[l,r]=await Promise.all([api.leads(),api.statRows()]);D.leads=l;D.rows=r;try{D.queue=null}catch(e){}}
   same('q',D.queue);same('l',D.leads);same('r',D.rows);
 }
 async function silentRefresh(force){
@@ -674,8 +682,8 @@ async function silentRefresh(force){
   try{
     let ch=false;
     if(D.me.role==='setter'){const q=await api.queue();if(!same('q',q)){D.queue=q;ch=true}}
-    else{const l=await api.leads(D.filter);if(!same('l',l)){D.leads=l;ch=true}}
-    const r=await api.statRows();if(!same('r',r)){D.rows=r;ch=true}
+    else{const l=await api.leads();if(!same('l',l)){D.leads=l;ch=true}}
+    const r=await api.statRows();if(!same('r',r)){D.rows=r;D.rowsV=(D.rowsV||0)+1;ch=true}
     if(!ch&&!force)return;
     const top=topEl();if(!top||document.querySelector('.sheet'))return;const n=top.dataset.name;
     if(n==='add'||n==='lead'||n==='settings')return;
@@ -683,30 +691,38 @@ async function silentRefresh(force){
     if(n==='queue'){refreshQueueUI()}else if(n==='leads'){refreshLeadsUI()}else{mount(top,n,top===curEl?{}:pushed[pushed.length-1].params,false);top.scrollTop=sc}
   }catch(e){}
 }
-setInterval(silentRefresh,12000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)silentRefresh(true)});
+setInterval(silentRefresh,8000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)silentRefresh(true)});
 
 /* ============ actions ============ */
-function collapse(row){const h=row.offsetHeight;row.style.overflow='hidden';return row.animate([{height:h+'px',opacity:1,transform:'none',marginBottom:'10px'},{height:'0px',opacity:0,transform:'translate3d(48px,0,0) scale(.96)',marginBottom:'0px',paddingTop:'0px',paddingBottom:'0px'}],{duration:420,easing:EASE,fill:'forwards'}).finished}
+function collapse(row){const h=row.offsetHeight;row.style.overflow='hidden';return row.animate([{height:h+'px',opacity:1,transform:'none',marginBottom:'10px'},{height:'0px',opacity:0,transform:'translate3d(48px,0,0) scale(.96)',marginBottom:'0px',paddingTop:'0px',paddingBottom:'0px'}],{duration:280,easing:EASE,fill:'forwards'}).finished}
 function openCh(ch,u){const url=(ch==='tg'?'https://t.me/':'https://instagram.com/')+u;try{if(TG){ch==='tg'&&TG.openTelegramLink?TG.openTelegramLink(url):TG.openLink(url)}else window.open(url,'_blank','noopener')}catch(e){window.open(url,'_blank')}}
 async function doSent(id){
   const q=D.queue,i=q.todo.findIndex(l=>l.id===id);if(i<0||busy.has(id))return;busy.add(id);hap('medium');
-  const l=q.todo[i],ch=D.opened[id]||(l.tg?'tg':'ig'),row=$(`#qlist [data-lead="${id}"]`);if(row)await collapse(row);
+  const l=q.todo[i],ch=D.opened[id]||(l.tg?'tg':'ig'),row=$(`#qlist [data-lead="${id}"]`);
+  const req=api.setSent(id,true,ch);
+  if(row)await collapse(row);
   q.todo.splice(i,1);l.status='sent';l.sent_at=Date.now();l.channel=ch;q.done.unshift(l);q.sentToday++;q.backlog--;refreshQueueUI();hnote('success');
-  try{await api.setSent(id,true,ch);same('q',q);api.statRows().then(r=>{D.rows=r;same('r',r)}).catch(()=>{});toast('Отписано','Отменить',()=>doUnsent(id))}
-  catch(e){q.done.shift();q.todo.splice(i,0,l);l.status='new';q.sentToday--;q.backlog++;refreshQueueUI();toast('Нет связи, не сохранилось')}
+  toast('Отписано','Отменить',()=>doUnsent(id));
+  try{await req;same('q',q);D.rows=(D.rows||[]).concat([[todayIn(tzOf()),ch,0]]);D.rowsV=(D.rowsV||0)+1}
+  catch(e){const k=q.done.findIndex(x=>x.id===id);if(k>=0)q.done.splice(k,1);q.todo.splice(i,0,l);l.status='new';l.sent_at=null;q.sentToday--;q.backlog++;refreshQueueUI();toast('Нет связи, не сохранилось')}
   busy.delete(id);
 }
 async function doUnsent(id){
   const q=D.queue,l=q.done.find(x=>x.id===id);if(!l||l.status!=='sent')return;hap('light');
   q.done=q.done.filter(x=>x.id!==id);l.status='new';l.sent_at=null;q.todo.push(l);q.todo.sort((a,b)=>a.created_at-b.created_at);q.sentToday--;q.backlog++;
   if($('.screen[data-name="queue"]'))refreshQueueUI();
-  try{await api.setSent(id,false,null);api.statRows().then(r=>{D.rows=r}).catch(()=>{})}catch(e){toast('Нет связи')}
+  try{await api.setSent(id,false,null);api.statRows().then(r=>{D.rows=r;D.rowsV=(D.rowsV||0)+1}).catch(()=>{})}catch(e){toast('Нет связи')}
 }
 async function setLeadStatus(id,s,fromList){
-  const l=getLead(id);if(!l)return;l.status=s;l.status_at=Date.now();const rk={replied:1,dialog:2,call:3,client:4};if(rk[s])l.reached=Math.max(l.reached||0,rk[s]);hap('light');
-  try{await api.setStatus(id,s)}catch(e){toast('Нет связи');return}
-  const r=await api.leads(D.filter);D.leads=r;same('l',r);api.statRows().then(x=>{D.rows=x;same('r',x)}).catch(()=>{});
-  if(fromList){const row=$(`#llist [data-lead="${id}"]`);if(row&&D.filter==='fresh')await collapse(row);refreshLeadsUI();hnote('success')}
+  const l=getLead(id);if(!l||l.status===s)return;const prev={status:l.status,reached:l.reached,status_at:l.status_at},c=D.leads.counts;hap('light');
+  const rk={replied:1,dialog:2,call:3,client:4};
+  leadKeys(l).forEach(k=>{c[k]=Math.max(0,(c[k]||0)-1)});
+  l.status=s;l.status_at=Date.now();if(rk[s])l.reached=Math.max(l.reached||0,rk[s]);
+  leadKeys(l).forEach(k=>{c[k]=(c[k]||0)+1});
+  D.rowsV=(D.rowsV||0)+1;
+  const req=api.setStatus(id,s).then(()=>api.statRows()).then(x=>{D.rows=x;D.rowsV=(D.rowsV||0)+1;same('r',x)});
+  if(fromList){const row=$(`#llist [data-lead="${id}"]`);hnote('success');if(row&&!LF[D.filter](l))await collapse(row);refreshLeadsUI()}
+  req.catch(()=>{leadKeys(l).forEach(k=>{c[k]=Math.max(0,(c[k]||0)-1)});Object.assign(l,prev);leadKeys(l).forEach(k=>{c[k]=(c[k]||0)+1});toast('Нет связи, статус не сохранился');refreshLeadsUI()});
 }
 function segAct(t){const seg=t.closest('.seg');segSet(seg,t.dataset.v);hsel()}
 
@@ -718,9 +734,9 @@ const ACT={
   sent:t=>doSent(t.dataset.id),unsent:t=>doUnsent(t.dataset.id),
   open:(t,e)=>{e.stopPropagation();hap('light');D.opened[t.dataset.id]=t.dataset.ch;openCh(t.dataset.ch,t.dataset.u)},
   lead:t=>push('lead',{id:t.dataset.id}),
-  filter:async t=>{D.filter=t.dataset.v;$$('#chips .chip').forEach(b=>b.classList.toggle('on',b===t));hsel();try{const r=await api.leads(D.filter);D.leads=r;same('l',r);const l=$('#llist');l.animate([{opacity:0,transform:'translate3d(0,10px,0)'},{opacity:1,transform:'none'}],{duration:380,easing:EASE});refreshLeadsUI()}catch(e){toast('Нет связи')}},
+  filter:t=>{D.filter=t.dataset.v;$$('#chips .chip').forEach(b=>b.classList.toggle('on',b===t));hsel();refreshLeadsUI();const l=$('#llist');l&&l.animate([{opacity:.35},{opacity:1}],{duration:200,easing:EASE})},
   quick:(t,e)=>{e.stopPropagation();setLeadStatus(t.dataset.id,'replied',true)},
-  period:t=>{D.period=t.dataset.v==='all'?'all':+t.dataset.v;segAct(t);const el=t.closest('.screen'),S=computeStats(D.rows||[],D.period,tzOf(),D.me.tempo);D.S=S;el.classList.remove('still');const b=$('#sbody',el);b.innerHTML=statsBody(S,D.me.role);enhance(b,true)},
+  period:t=>{D.period=t.dataset.v==='all'?'all':+t.dataset.v;segAct(t);const el=t.closest('.screen'),S=statsCached(D.period);D.S=S;el.classList.remove('still');const b=$('#sbody',el);b.innerHTML=statsBody(S,D.me.role);enhance(b,true)},
   bar:t=>{const S=D.S,s=S.series[+t.dataset.i];$$('.bar').forEach(b=>b.classList.toggle('sel',b===t));hsel();$('#tip').innerHTML=`<b>${esc(s.sub)}</b> отписано ${s.sent}${D.me.role==='setter'?'':', ответили '+s.replied}`},
   setstatus:t=>{const id=t.closest('#sgrid').dataset.id,s=t.dataset.v;$$('#sgrid .sb').forEach(b=>b.classList.toggle('on',b===t));const idx=ORDER.indexOf(s);$$('#steps i').forEach((i,k)=>i.classList.toggle('on',s!=='lost'&&k<=idx));$('#stl').textContent=STATUS[s];setLeadStatus(id,s,false)},
   followers:t=>{const l=getLead(t.dataset.id);sheet(`<h3>Подписчики</h3><div class="sub">Можно писать 8200 или 8,2к</div><input id="fin" inputmode="decimal" placeholder="Например 8,2к" value="${l.followers||''}" autocomplete="off"><button class="btn p" id="fsave">Сохранить</button>`,(sh,close)=>{const i=$('#fin',sh);setTimeout(()=>i.focus(),350);$('#fsave',sh).onclick=async()=>{const n=parseNum(i.value);if(n==null&&i.value.trim()){hnote('error');return}l.followers=n;close();const f=$('#fol');if(f)f.textContent=n?fmtK(n)+' подписчиков':'Указать подписчиков';hnote('success');try{await api.update(l.id,{followers:n==null?'':n})}catch(e){toast('Нет связи')}}})},
