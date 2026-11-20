@@ -218,8 +218,8 @@ button.lrow:active,a.lrow:active{transform:scale(.985)}
 /* tabbar */
 .tabbar{position:absolute;left:50%;bottom:calc(14px + var(--sb));transform:translateX(-50%);display:flex;padding:5px;border-radius:32px;background:rgba(255,255,255,.8);-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);box-shadow:0 0 0 .5px rgba(17,17,19,.07),0 12px 32px rgba(17,17,19,.10);z-index:20;transition:transform .5s var(--ease),opacity .3s}
 .tabbar.hide{transform:translate(-50%,120px);opacity:0}
-.tabbar .thumb{position:absolute;top:5px;bottom:5px;left:5px;width:88px;border-radius:27px;background:var(--fill);transform:translate3d(calc(var(--i,0)*88px),0,0);transition:transform .55s var(--ease)}
-.tab{position:relative;width:88px;height:56px;border-radius:27px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:700;font-size:10.5px;color:var(--ink2);transition:color .3s}
+.tabbar .thumb{position:absolute;top:5px;bottom:5px;left:5px;width:var(--tw,88px);border-radius:27px;background:var(--fill);transform:translate3d(calc(var(--i,0)*var(--tw,88px)),0,0);transition:transform .55s var(--ease)}
+.tab{position:relative;width:var(--tw,88px);height:56px;border-radius:27px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:700;font-size:10.5px;color:var(--ink2);transition:color .3s}
 .tab.on{color:var(--ink)}
 .tab .ic{transition:transform .45s var(--ease)}.tab.on .ic{transform:translateY(-1px) scale(1.06)}
 
@@ -261,6 +261,29 @@ button.lrow:active,a.lrow:active{transform:scale(.985)}
 @media (min-width:521px){#app{box-shadow:0 0 0 1px rgba(0,0,0,.06),0 30px 80px rgba(0,0,0,.12)}}
 
 .still *{animation:none!important}
+
+/* multi-setter */
+.lnm{display:flex;align-items:center;gap:4px;min-width:0}.lnm .lname{min-width:0}
+.pen{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--ink3);transition:background-color .2s}.pen:active{background:var(--fill)}
+.avw{display:flex;flex:none;border-radius:50%}
+button.irow{width:100%;text-align:left}
+.who{margin-top:12px;margin-bottom:0}.who+.seg{margin-top:12px}.who+.chips{margin-top:8px}
+.tcard{padding:16px 16px 18px;margin-top:12px}
+.thead{display:flex;align-items:center;gap:12px;width:100%;text-align:left;color:var(--ink)}
+.thead .tn{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.thead .tn b{font-size:17px;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.thead .tn span{font-size:13px;font-weight:500;color:var(--ink2)}
+.thead .ic{color:var(--ink3)}
+.tm{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0 0}
+.tm span{display:block;font-size:12px;font-weight:600;color:var(--ink2)}
+.tm b{display:block;font-size:30px;font-weight:700;letter-spacing:-1.2px;margin-top:4px;font-variant-numeric:tabular-nums}
+.tm b i,.tl b i.of{font-style:normal;font-size:16px;font-weight:600;color:var(--ink3);letter-spacing:-.4px}
+.tl b i.of{font-size:14px}
+.tm .key b{color:var(--ink)}
+.alert{display:flex;align-items:center;gap:8px;margin-top:14px;padding:11px 14px;border-radius:16px;font-size:14px;font-weight:700;letter-spacing:-.1px}
+.alert.bad{background:#FDECEA;color:#C0281D}.alert.ok{background:var(--okBg);color:var(--ok)}
+.dbars{display:flex;align-items:flex-end;gap:5px;height:38px;margin-top:16px}
+.dbars i{flex:1;border-radius:5px;background:#DADADF}.dbars i.on{background:var(--ink)}
+.sheet .field input{width:auto;flex:1;min-width:0;height:100%;margin:0;padding:0;background:none;border-radius:0;font-size:17px}
+.sheet .stepper .sbtn{flex:none}
 
 </style>
 </head>
@@ -315,6 +338,9 @@ const P={
  trend:'<path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/>',
  ig:'<rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/>',
  owner:'<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+ users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+ edit:'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+ trash:'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>'
 };
 const FILLED={tgf:'<path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>'};
@@ -326,6 +352,7 @@ const hash=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;ret
 const initials=n=>{const p=String(n||'?').replace(/^@/,'').trim().split(/[\s._]+/).filter(Boolean);return ((p[0]||'?')[0]+(p[1]?p[1][0]:'')).toUpperCase()};
 const leadName=l=>l.name||('@'+(l.tg||l.ig||'?'));
 const avatar=(l,s=48)=>{const t=TONES[hash(l.name||l.tg||l.ig||'x')%TONES.length];return `<div class="av" style="--s:${s}px;background:${t[0]};color:${t[1]}"><span>${esc(initials(l.name||l.tg||l.ig))}</span>${l.avatar?`<img src="${esc(l.avatar)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">`:''}</div>`};
+const ago=t=>{if(!t)return 'еще не было';const m=Math.max(0,Math.round((Date.now()-t)/6e4));if(m<1)return 'только что';if(m<60)return m+' мин назад';const h=Math.round(m/60);if(h<24)return h+' ч назад';return Math.round(h/24)+' дн назад'};
 const MON=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 const WD=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
 const tzOf=()=>(D.me&&D.me.tz)||'Asia/Tbilisi';
@@ -387,6 +414,9 @@ const remote={
   statRows:()=>rpc('touch_stat_rows',{p_token:TOKEN}),
   setStatus:(id,s)=>rpc('touch_set_status',{p_token:TOKEN,p_id:id,p_status:s}),
   update:(id,patch)=>rpc('touch_update_lead',{p_token:TOKEN,p_id:id,p_patch:patch}),
+  team:()=>rpc('touch_team',{p_token:TOKEN}),
+  delLead:id=>rpc('touch_delete_lead',{p_token:TOKEN,p_id:id}),
+  memberUpdate:(id,name,tempo)=>rpc('touch_member_update',{p_token:TOKEN,p_member:id,p_name:name,p_tempo:tempo}),
   setTempo:n=>rpc('touch_set_tempo',{p_token:TOKEN,p_tempo:n}),
   profile:(name,photo)=>rpc('touch_profile',{p_token:TOKEN,p_name:name,p_photo:photo}),
   async leave(){try{await rpc('touch_leave',{p_token:TOKEN})}catch(e){}localStorage.removeItem('touch_token');TOKEN=''},
@@ -398,34 +428,44 @@ function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(see
 const NAMES=[['Анна Котова','kotova_anna'],['Игорь Белов','belov_coach'],['Марина Лис','marina_lis'],['Денис Ершов','ershov_train'],['Ольга Сим','olga_sim'],['Кирилл Жуков','kirill_zhukov'],['Павел Рябов','ryabov_pro'],['Алина Нур','alina_nur'],['Тимур Асанов','timur_fit'],['Вика Громова','vika_gromova'],['Роман Лель','roman_lel'],['Наташа Ким','natasha_kim'],['Артур Бут','artur_boot'],['Лена Орлова','lena_orlova'],['Макс Рид','max_read'],['Соня Мур','sonya_moor'],['Глеб Ким','gleb_kim'],['Ира Вест','ira_west'],['Влад Нова','vlad_nova'],['Диана Ли','diana_lee']];
 function seedDemo(role){
   const R=rng(7),day=864e5,now=Date.now(),leads=[];let n=0;
-  const mk=(o)=>{const b=NAMES[n%NAMES.length];const k=Math.floor(n/NAMES.length);const l=Object.assign({id:'d'+(++n),tg:null,ig:null,name:b[0],avatar:null,followers:null,note:'',status:'new',reached:0,channel:null,created_at:now-(2000-n)*6e4,sent_at:null,status_at:null},o);const h=b[1]+(k?k:'');const ch=R()<.62?'tg':'ig';if(R()<.7)l.tg=h;if(!l.tg||R()<.5)l.ig=h+(R()<.5?'.fit':'');if(!l.channel&&l.sent_at)l.channel=l.tg&&l.ig?ch:l.tg?'tg':'ig';if(l.sent_at&&l.channel==='tg'&&!l.tg){l.tg=h}if(l.sent_at&&l.channel==='ig'&&!l.ig){l.ig=h}l.followers=l.followers||Math.round(2000+R()*18000);return l};
+  const mk=(o)=>{const b=NAMES[n%NAMES.length];const k=Math.floor(n/NAMES.length);const l=Object.assign({id:'d'+(++n),by:'s1',tg:null,ig:null,name:b[0],avatar:null,followers:null,note:'',status:'new',reached:0,channel:null,created_at:now-(2000-n)*6e4,sent_at:null,status_at:null},o);const h=b[1]+(k?k:'');const ch=R()<.62?'tg':'ig';if(R()<.7)l.tg=h;if(!l.tg||R()<.5)l.ig=h+(R()<.5?'.fit':'');if(!l.channel&&l.sent_at)l.channel=l.tg&&l.ig?ch:l.tg?'tg':'ig';if(l.sent_at&&l.channel==='tg'&&!l.tg){l.tg=h}if(l.sent_at&&l.channel==='ig'&&!l.ig){l.ig=h}l.followers=l.followers||Math.round(2000+R()*18000);return l};
   for(let d=29;d>=0;d--){const cnt=d===0?14:Math.round(15+R()*7)+(d<10?Math.floor((10-d)/3):0);
     for(let i=0;i<cnt;i++){const t=now-d*day-(i*17+3)*6e4;const l=mk({sent_at:t,status:'sent'});const p=R();
       if(p<.21+(d<15?.04:0)){const q=R();l.reached=q<.55?1:q<.8?2:q<.93?3:4;l.status=['','replied','dialog','call','client'][l.reached];if(R()<.14){l.status='lost'}l.status_at=t+3600e3}
       leads.push(l)}}
   for(let i=0;i<53;i++)leads.push(mk({}));
-  return {role:role||'owner',tempo:20,code:'K7M2QX',tz:'Asia/Tbilisi',leads,me:{owner:{name:'Артем',photo:null},setter:{name:'Дмитрий',photo:null}}};
+  for(let d=3;d>=0;d--){const cnt=d===0?4:9;for(let i=0;i<cnt;i++){const t=now-d*day-(i*23+5)*6e4;const l=mk({by:'s2',sent_at:t,status:'sent'});if(R()<.12){l.reached=1;l.status='replied';l.status_at=t+3600e3}leads.push(l)}}
+  for(let i=0;i<2;i++)leads.push(mk({by:'s2',created_at:now-(20-i*3)*6e4}));
+  const members=[{id:'o1',name:'Артем',role:'owner',photo:null,tempo:20},{id:'s1',name:'Андрей',role:'setter',photo:null,tempo:20},{id:'s2',name:'Артем 2',role:'setter',photo:null,tempo:15}];
+  return {role:role||'owner',code:'K7M2QX',tz:'Asia/Tbilisi',leads,members,v:2};
 }
 let DB=null;
 const dsave=()=>{try{localStorage.setItem('touch_demo',JSON.stringify(DB))}catch(e){}};
 function dinit(role){
   let raw=null;try{raw=JSON.parse(localStorage.getItem('touch_demo')||'null')}catch(e){}
-  DB=raw&&raw.leads&&raw.leads.length>20?raw:seedDemo(role);if(role)DB.role=role;dsave();
+  DB=raw&&raw.v===2&&raw.leads&&raw.leads.length>20?raw:seedDemo(role);if(role)DB.role=role;dsave();
 }
-const dtoday=l=>l.sent_at&&new Date(l.sent_at).toLocaleDateString('sv-SE',{timeZone:'Asia/Tbilisi'})===todayIn('Asia/Tbilisi');
+const dday=t=>new Date(t).toLocaleDateString('sv-SE',{timeZone:'Asia/Tbilisi'});
+const dtoday=l=>l.sent_at&&dday(l.sent_at)===todayIn('Asia/Tbilisi');
+const dme=()=>DB.members.find(m=>m.id===({owner:'o1',setter:'s1',setter2:'s2'}[DB.role]||'o1'));
+const dmine=()=>{const m=dme();return m.role==='owner'?DB.leads:DB.leads.filter(l=>l.by===m.id)};
 const demo={
   async create(u){dinit('owner');DB.role='owner';dsave();TOKEN='demo';localStorage.setItem('touch_token','demo');return {role:'owner',code:DB.code}},
   async join(code){if(String(code).toUpperCase()!==DB.code&&String(code).toUpperCase()!=='DEMO')throw new Error('bad_code');DB.role='setter';dsave();TOKEN='demo';localStorage.setItem('touch_token','demo');return {role:'setter'}},
-  async me(){const m=DB.me[DB.role];return {role:DB.role,name:(D.tgUser&&D.tgUser.name)||m.name,photo:(D.tgUser&&D.tgUser.photo)||m.photo,tempo:DB.tempo,code:DB.code,tz:DB.tz,members:[{name:'Артем',role:'owner'},{name:'Дмитрий',role:'setter'}]}},
-  async queue(){const t=DB.leads.filter(l=>l.status==='new').sort((a,b)=>a.created_at-b.created_at);const done=DB.leads.filter(dtoday).sort((a,b)=>b.sent_at-a.sent_at);return {todo:t.slice(0,Math.max(0,DB.tempo-done.length)),done,sentToday:done.length,backlog:t.length,tempo:DB.tempo}},
-  async addLead(tg,ig,name,avatar){const ex=DB.leads.find(l=>(tg&&l.tg===tg)||(ig&&l.ig===ig));if(ex)return {dup:true,lead:ex};const l={id:'n'+Date.now(),tg:tg||null,ig:ig||null,name:name||null,avatar:avatar||null,followers:null,note:'',status:'new',reached:0,channel:null,created_at:Date.now(),sent_at:null,status_at:null};DB.leads.push(l);dsave();return {dup:false,lead:l}},
+  async me(){const m=dme();return {id:m.id,role:m.role,name:(D.tgUser&&D.tgUser.name)||m.name,photo:(D.tgUser&&D.tgUser.photo)||m.photo,tempo:m.tempo,code:DB.code,tz:DB.tz,members:DB.members.map(x=>Object.assign({},x))}},
+  async queue(){const m=dme(),mine=dmine();const t=mine.filter(l=>l.status==='new').sort((a,b)=>a.created_at-b.created_at);const done=mine.filter(dtoday).sort((a,b)=>b.sent_at-a.sent_at);return {todo:t.slice(0,Math.max(0,m.tempo-done.length)),done,sentToday:done.length,backlog:t.length,tempo:m.tempo}},
+  async addLead(tg,ig,name,avatar){const ex=DB.leads.find(l=>(tg&&l.tg===tg)||(ig&&l.ig===ig));if(ex)return {dup:true,lead:ex};const l={id:'n'+Date.now(),by:dme().id,tg:tg||null,ig:ig||null,name:name||null,avatar:avatar||null,followers:null,note:'',status:'new',reached:0,channel:null,created_at:Date.now(),sent_at:null,status_at:null};DB.leads.push(l);dsave();return {dup:false,lead:l}},
   async setSent(id,sent,ch){const l=DB.leads.find(x=>x.id===id);if(!l)return null;if(sent&&l.status==='new'){l.status='sent';l.sent_at=Date.now();l.channel=ch||(l.tg?'tg':'ig');l.status_at=Date.now()}else if(!sent&&l.status==='sent'){l.status='new';l.sent_at=null;l.channel=null}dsave();return l},
   async leads(f){const w=7*864e5,now=Date.now();const fl={fresh:l=>l.status==='sent'&&now-l.sent_at<w,active:l=>['replied','dialog','call'].includes(l.status),client:l=>l.status==='client',lost:l=>l.status==='lost',all:l=>l.status!=='new'};
-    const rows=DB.leads.filter(fl[f]||fl.all).sort((a,b)=>(b.status_at||b.sent_at)-(a.status_at||a.sent_at)).slice(0,300);const c={};for(const k in fl)c[k]=DB.leads.filter(fl[k]).length;return {rows,counts:c}},
-  async statRows(){return DB.leads.filter(l=>l.sent_at).map(l=>[new Date(l.sent_at).toLocaleDateString('sv-SE',{timeZone:'Asia/Tbilisi'}),l.channel||'tg',l.reached])},
+    const mine=dmine();const rows=mine.filter(fl[f]||fl.all).sort((a,b)=>(b.status_at||b.sent_at)-(a.status_at||a.sent_at)).slice(0,1000);const c={};for(const k in fl)c[k]=mine.filter(fl[k]).length;return {rows,counts:c}},
+  async statRows(){return dmine().filter(l=>l.sent_at).map(l=>[dday(l.sent_at),l.channel||'tg',l.reached,l.by])},
   async setStatus(id,s){const l=DB.leads.find(x=>x.id===id);const rk={sent:0,replied:1,dialog:2,call:3,client:4};l.status=s;if(s in rk)l.reached=Math.max(l.reached,rk[s]);l.status_at=Date.now();dsave();return l},
   async update(id,p){const l=DB.leads.find(x=>x.id===id);for(const k in p){l[k]=p[k]===''?null:p[k]}dsave();return l},
-  async setTempo(n){DB.tempo=n;dsave();return n},
+  async delLead(id){DB.leads=DB.leads.filter(x=>x.id!==id);dsave();return true},
+  async memberUpdate(id,name,tempo){const m=DB.members.find(x=>x.id===id);if(m){if(name)m.name=name;if(tempo)m.tempo=tempo}dsave();return true},
+  async team(){const today=todayIn('Asia/Tbilisi');return DB.members.filter(m=>m.role==='setter').map(m=>{const ls=DB.leads.filter(l=>l.by===m.id);const days=[];for(let i=6;i>=0;i--){const d=addDays(today,-i);days.push(ls.filter(l=>l.sent_at&&dday(l.sent_at)===d).length)}
+    const mx=t=>t.length?Math.max(...t):null;return {id:m.id,name:m.name,photo:m.photo,tempo:m.tempo,sentToday:ls.filter(dtoday).length,addedToday:ls.filter(l=>dday(l.created_at)===today).length,backlog:ls.filter(l=>l.status==='new').length,lastAdded:mx(ls.map(l=>l.created_at)),lastSent:mx(ls.filter(l=>l.sent_at).map(l=>l.sent_at)),days}})},
+  async setTempo(n){dme().tempo=n;dsave();return n},
   async profile(){return true},
   async leave(){localStorage.removeItem('touch_token');TOKEN=''},
   async tgProfile(u){await sleep(650);const pick=NAMES.find(n=>n[1]===u);return {name:pick?pick[0]:u.replace(/[_.]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()),avatar:null,exists:true}}
@@ -437,20 +477,27 @@ const isFresh=l=>l.status==='sent'&&Date.now()-l.sent_at<WEEK;
 const LF={fresh:isFresh,active:l=>l.status==='replied'||l.status==='dialog'||l.status==='call',client:l=>l.status==='client',lost:l=>l.status==='lost',all:l=>l.status!=='new'};
 const leadKeys=l=>{const k=[];if(l.status==='new')return k;k.push('all');for(const f of ['fresh','active','client','lost'])if(LF[f](l))k.push(f);return k};
 const statsMemo={};
-function statsCached(period){const key=period+'|'+(D.rows?D.rows.length:0)+'|'+D.me.tempo+'|'+todayIn(tzOf())+'|'+(D.rowsV||0);return statsMemo[key]||(statsMemo[key]=computeStats(D.rows||[],period,tzOf(),D.me.tempo))}
+const setters=()=>((D.me&&D.me.members)||[]).filter(m=>m.role==='setter');
+const planFor=()=>{if(D.me.role!=='owner')return D.me.tempo;const ss=setters();if(D.who&&D.who!=='all'){const m=ss.find(x=>x.id===D.who);if(m)return m.tempo}return ss.reduce((a,m)=>a+m.tempo,0)||20};
+const memName=id=>{const m=((D.me&&D.me.members)||[]).find(x=>x.id===id);return m?m.name:''};
+function statsCached(period){const who=D.me.role==='owner'?D.who:'all',pl=planFor(),key=period+'|'+(D.rows?D.rows.length:0)+'|'+pl+'|'+who+'|'+todayIn(tzOf())+'|'+(D.rowsV||0);
+  if(statsMemo[key])return statsMemo[key];const rows=who==='all'?(D.rows||[]):(D.rows||[]).filter(r=>r[3]===who);return statsMemo[key]=computeStats(rows,period,tzOf(),pl)}
+const lcounts=()=>{const rows=(D.leads&&D.leads.rows)||[],c={fresh:0,active:0,client:0,lost:0,all:0};for(const l of rows){if(D.who!=='all'&&l.by!==D.who)continue;for(const k of leadKeys(l))c[k]++}return c};
 
 /* ============ state ============ */
-const D={me:null,queue:null,leads:null,rows:null,filter:'fresh',period:7,qtab:'todo',recent:[],opened:{},pv:null,tgUser:null,setup:{step:'role',role:'setter',code:''},S:null};
+const D={me:null,queue:null,leads:null,rows:null,filter:'fresh',period:7,qtab:'todo',recent:[],opened:{},who:'all',team:null,pv:null,tgUser:null,setup:{step:'role',role:'setter',code:''},S:null};
 const T={},M={};
 const TABS={
   setter:[['home','Главная','home'],['queue','Очередь','list'],['add','Добавить','userplus']],
-  owner:[['leads','Лиды','list'],['stats','Статистика','chart'],['settings','Настройки','sliders']]
+  owner:[['team','Команда','users'],['leads','Лиды','list'],['stats','Статистика','chart'],['settings','Настройки','sliders']]
 };
 const delta=S=>{if(S.delta==null)return '';const c=S.delta>0?'':S.delta<0?' neg':' zero';return `<span class="delta${c}"><span style="display:flex;${S.delta<0?'transform:scaleY(-1)':''}">${ic('trend',13,2.4)}</span>${S.delta>0?'+':''}${S.delta}%</span>`};
 const segHTML=(act,items,cur)=>`<div class="seg" data-seg="${act}" style="--n:${items.length};--i:${Math.max(0,items.findIndex(x=>x[0]===cur))}"><i class="thumb"></i>${items.map(x=>`<button class="${x[0]===cur?'on':''}" data-act="${act}" data-v="${x[0]}">${x[1]}</button>`).join('')}</div>`;
 const segSet=(seg,v)=>{const b=$$('button',seg);b.forEach((x,i)=>{const on=x.dataset.v===String(v);x.classList.toggle('on',on);if(on)seg.style.setProperty('--i',i)})};
 const chipHTML=(l,ch,btn)=>{const u=l[ch];if(!u)return '';const cls=ch==='tg'?'ch tg':'ch ig';const inner=`${ic(ch==='tg'?'tgf':'ig',14,2)}<span>@${esc(u)}</span>`;return btn?`<button class="${cls} p" data-act="open" data-ch="${ch}" data-u="${esc(u)}" data-id="${l.id}" aria-label="Открыть ${ch==='tg'?'Telegram':'Instagram'}">${inner}</button>`:`<span class="${cls}">${inner}</span>`};
 const empty=(title,sub)=>`<div class="empty"><div class="big2"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#111113" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><b>${title}</b><span>${sub||''}</span></div>`;
+const lnm=l=>`<div class="lnm"><div class="lname">${esc(leadName(l))}</div><button class="pen p" data-act="editlead" data-id="${l.id}" aria-label="Изменить лида">${ic('edit',13,2.2)}</button></div>`;
+const whoHTML=()=>{if(D.me.role!=='owner')return '';const ss=setters();if(ss.length<2)return '';return `<div class="chips who" id="who">${[['all','Все']].concat(ss.map(m=>[m.id,m.name])).map(x=>`<button class="chip p${D.who===x[0]?' on':''}" data-act="who" data-v="${x[0]}">${esc(x[1])}</button>`).join('')}</div>`};
 const getLead=id=>{const pools=[D.leads&&D.leads.rows,D.queue&&D.queue.todo,D.queue&&D.queue.done,D.recent];for(const p of pools){const f=p&&p.find(l=>l.id===id);if(f)return f}return null};
 
 /* ============ templates ============ */
@@ -474,7 +521,7 @@ T.home=()=>{
 };
 M.home=(el,p,first)=>{const g=$('.gfg',el);if(!g)return;if(first){raf().then(raf).then(()=>{g.style.strokeDashoffset=g.dataset.to})}else{g.style.transition='none';g.style.strokeDashoffset=g.dataset.to}};
 
-const qRow=(l,mode)=>`<div class="lrow" data-lead="${l.id}">${avatar(l,48)}<div class="lmain"><div class="lname">${esc(leadName(l))}</div><div class="chs">${chipHTML(l,'tg',true)}${chipHTML(l,'ig',true)}</div></div>${mode==='todo'?`<button class="sendbtn p" data-act="sent" data-id="${l.id}">Отписал</button>`:l.status==='sent'?`<button class="check p" data-act="unsent" data-id="${l.id}" aria-label="Вернуть в очередь">${ic('check',19,2.4)}</button>`:`<span class="spill ${l.status}">${STATUS[l.status]}</span>`}</div>`;
+const qRow=(l,mode)=>`<div class="lrow" data-lead="${l.id}"><span class="avw p" data-act="editlead" data-id="${l.id}">${avatar(l,48)}</span><div class="lmain">${lnm(l)}<div class="chs">${chipHTML(l,'tg',true)}${chipHTML(l,'ig',true)}</div></div>${mode==='todo'?`<button class="sendbtn p" data-act="sent" data-id="${l.id}">Отписал</button>`:l.status==='sent'?`<button class="check p" data-act="unsent" data-id="${l.id}" aria-label="Вернуть в очередь">${ic('check',19,2.4)}</button>`:`<span class="spill ${l.status}">${STATUS[l.status]}</span>`}</div>`;
 const qList=()=>{const q=D.queue;if(D.qtab==='todo')return q.todo.length?q.todo.map(l=>qRow(l,'todo')).join(''):empty('На сегодня все','Новых лидов в очереди нет');return q.done.length?q.done.map(l=>qRow(l,'done')).join(''):empty('Пока пусто','Отписанные лиды появятся здесь')};
 T.queue=()=>{const q=D.queue,me=D.me;return `
 <header class="top"><div></div><button class="roundbtn dark p" data-act="add" aria-label="Добавить лида">${ic('plus',20,2.2)}</button></header>
@@ -504,7 +551,7 @@ T.add=()=>`
 <div class="hint">Вставь ссылку в любое поле, приложение само поймет, где Telegram, а где Instagram. Фото из Telegram подтянется.</div>
 <button class="btn p" id="addbtn" disabled>Добавить в запас</button>
 <div id="recent">${recentHTML()}</div>`;
-const recentHTML=()=>D.recent.length?`<h2 class="h2" style="font-size:18px;margin-top:26px">Только что добавлено</h2><div class="list">${D.recent.slice(0,3).map(l=>`<div class="lrow">${avatar(l,44)}<div class="lmain"><div class="lname">${esc(leadName(l))}</div><div class="chs">${chipHTML(l,'tg',false)}${chipHTML(l,'ig',false)}</div></div><span class="found" style="width:30px;height:30px">${ic('check',16,2.6)}</span></div>`).join('')}</div>`:'';
+const recentHTML=()=>D.recent.length?`<h2 class="h2" style="font-size:18px;margin-top:26px">Только что добавлено</h2><div class="list">${D.recent.slice(0,3).map(l=>`<div class="lrow"><span class="avw p" data-act="editlead" data-id="${l.id}">${avatar(l,44)}</span><div class="lmain">${lnm(l)}<div class="chs">${chipHTML(l,'tg',false)}${chipHTML(l,'ig',false)}</div></div><span class="found" style="width:30px;height:30px">${ic('check',16,2.6)}</span></div>`).join('')}</div>`:'';
 const pvHTML=pv=>!pv?'':pv.loading?`<div class="card pv"><div class="sk" style="width:48px;height:48px;border-radius:50%"></div><div class="t"><div class="sk" style="height:14px;width:60%;margin-bottom:8px"></div><div class="sk" style="height:11px;width:36%"></div></div></div>`:pv.exists===false?`<div class="card pv"><div class="t"><b>Профиль не найден</b><span>Проверь ник, лид все равно можно добавить</span></div></div>`:`<div class="card pv">${avatar({name:pv.name,tg:pv.u,avatar:pv.avatar},48)}<div class="t"><b>${esc(pv.name||('@'+pv.u))}</b><span>@${esc(pv.u)}</span></div><span class="found">${ic('check',16,2.6)}</span></div>`;
 M.add=el=>{
   const ft=$('#f-tg',el),fi=$('#f-ig',el),btn=$('#addbtn',el),prev=$('#prev',el);let timer=0;
@@ -530,7 +577,7 @@ M.add=el=>{
 /* ---- stats ---- */
 const shades=['#111113','#2E2E33','#55555B','#8A8A91','#B9B9BF'];
 function statsBody(S,role){
-  const solo=role==='setter',tempo=D.me.tempo,n=S.series.length;
+  const solo=role==='setter',tempo=planFor(),n=S.series.length;
   const max=Math.max(1,...S.series.map(s=>s.sent),S.series[0]&&S.series[0].daily?tempo:0);
   const gap=n>20?3:n>10?5:8;
   const bars=S.series.map((s,i)=>`<button class="bar${solo?' solo':''}${i===n-1?' last sel':''}" data-act="bar" data-i="${i}" aria-label="${esc(s.sub)}: ${s.sent}" style="--h:${(s.sent/max*100).toFixed(1)};--h2:${solo?0:(s.replied/max*100).toFixed(1)};--i:${i}"><i class="b1"></i>${solo?'':'<i class="b2"></i>'}</button>`).join('');
@@ -553,26 +600,26 @@ ${solo?'':`<div class="legend"><span><i style="background:#DCDCE1"></i>Отпи�
 }
 T.stats=p=>{const role=D.me.role,S=statsCached(D.period);D.S=S;
   return `${p.pushed?`<header class="top"><button class="roundbtn p" data-act="back" aria-label="Назад">${ic('back',20)}</button><div></div></header>`:'<div style="height:10px"></div>'}
-<h1 class="title">Статистика</h1>${segHTML('period',[['7','7 дней'],['30','30 дней'],['all','Все время']],String(D.period))}<div id="sbody">${statsBody(S,role)}</div>`};
+<h1 class="title">Статистика</h1>${whoHTML()}${segHTML('period',[['7','7 дней'],['30','30 дней'],['all','Все время']],String(D.period))}<div id="sbody">${statsBody(S,role)}</div>`};
 
 /* ---- leads (owner) ---- */
 const lRow=l=>`<div class="lrow p" role="button" tabindex="0" data-act="lead" data-id="${l.id}" data-lead="${l.id}">${avatar(l,48)}<div class="lmain"><div class="lname">${esc(leadName(l))}</div><div class="chs">${chipHTML(l,'tg',false)}${chipHTML(l,'ig',false)}</div></div>${l.status==='sent'?`<button class="quick p" data-act="quick" data-id="${l.id}">${ic('msg',16,2)}Ответил</button>`:`<span class="spill ${l.status}">${STATUS[l.status]||''}</span>`}</div>`;
-const leadsView=()=>D.leads.rows.filter(LF[D.filter]||LF.all);
+const leadsView=()=>D.leads.rows.filter(l=>(D.who==='all'||l.by===D.who)&&(LF[D.filter]||LF.all)(l));
 const lList=()=>{const v=leadsView();return v.length?v.map(lRow).join(''):empty('Здесь пока пусто','Лиды появятся, когда сеттер начнет писать')};
-T.leads=()=>{const c=D.leads.counts,ch=[['fresh','Новые'],['active','В работе'],['client','Клиенты'],['lost','Отказ'],['all','Все']];
+T.leads=()=>{const c=lcounts(),ch=[['fresh','Новые'],['active','В работе'],['client','Клиенты'],['lost','Отказ'],['all','Все']];
   return `<div style="height:10px"></div><h1 class="title">Лиды</h1><div class="sub">Отметь, кто ответил</div>
-<div class="chips" id="chips">${ch.map(x=>`<button class="chip p${D.filter===x[0]?' on':''}" data-act="filter" data-v="${x[0]}">${x[1]}<i>${c[x[0]]||0}</i></button>`).join('')}</div>
+${whoHTML()}<div class="chips" id="chips">${ch.map(x=>`<button class="chip p${D.filter===x[0]?' on':''}" data-act="filter" data-v="${x[0]}">${x[1]}<i>${c[x[0]]||0}</i></button>`).join('')}</div>
 <div class="list" id="llist">${lList()}</div>`};
-function refreshLeadsUI(){const el=$('.screen[data-name="leads"]');if(!el)return;const c=D.leads.counts;$$('#chips .chip',el).forEach(b=>{b.classList.toggle('on',b.dataset.v===D.filter);b.querySelector('i').textContent=c[b.dataset.v]||0});$('#llist',el).innerHTML=lList();el.classList.add('still')}
+function refreshLeadsUI(){const el=$('.screen[data-name="leads"]');if(!el)return;const c=lcounts();$$('#chips .chip',el).forEach(b=>{b.classList.toggle('on',b.dataset.v===D.filter);b.querySelector('i').textContent=c[b.dataset.v]||0});$('#llist',el).innerHTML=lList();el.classList.add('still')}
 
 /* ---- lead card ---- */
 const ORDER=['sent','replied','dialog','call','client'];
 T.lead=p=>{const l=getLead(p.id);if(!l)return '<header class="top"><button class="roundbtn p" data-act="back">'+ic('back',20)+'</button></header>';
   const idx=ORDER.indexOf(l.status),one=!(l.tg&&l.ig);
   const btn=(k)=>l[k]?`<button class="cbtn ${k} p" data-act="open" data-ch="${k}" data-u="${esc(l[k])}" data-id="${l.id}">${ic(k==='tg'?'tgf':'ig',20,1.9)}${k==='tg'?'Telegram':'Instagram'}</button>`:`<button class="cbtn add p" data-act="addsocial" data-ch="${k}" data-id="${l.id}">${ic('plus',18,2.2)}${k==='tg'?'Telegram':'Instagram'}</button>`;
-  return `<header class="top"><button class="roundbtn p" data-act="back" aria-label="Назад">${ic('back',20)}</button><div></div></header>
+  return `<header class="top"><button class="roundbtn p" data-act="back" aria-label="Назад">${ic('back',20)}</button><button class="roundbtn p" data-act="editlead" data-id="${l.id}" aria-label="Изменить лида">${ic('edit',19,1.9)}</button></header>
 <div class="card lhead">${avatar(l,104)}<h1>${esc(leadName(l))}</h1><div class="chs" style="justify-content:center">${chipHTML(l,'tg',false)}${chipHTML(l,'ig',false)}</div>
-<button class="fchip p" data-act="followers" data-id="${l.id}">${ic('trend',15,2)}<span id="fol">${l.followers?fmtK(l.followers)+' подписчиков':'Указать подписчиков'}</span></button>
+${D.me.role==='owner'&&l.by&&setters().length>1?`<div class="cap" style="margin-bottom:12px">Добавил ${esc(memName(l.by))}</div>`:''}<button class="fchip p" data-act="followers" data-id="${l.id}">${ic('trend',15,2)}<span id="fol">${l.followers?fmtK(l.followers)+' подписчиков':'Указать подписчиков'}</span></button>
 <div class="cbtns">${btn('tg')}${btn('ig')}</div></div>
 <div class="card sec"><div class="between"><b style="font-size:17px">Статус</b><span class="cap" id="stl">${STATUS[l.status]||''}</span></div>
 <div class="steps" id="steps">${ORDER.map((s,i)=>`<i class="${l.status!=='lost'&&i<=idx?'on':''}"></i>`).join('')}</div>
@@ -580,16 +627,31 @@ T.lead=p=>{const l=getLead(p.id);if(!l)return '<header class="top"><button class
 <div class="card notebox" style="margin-top:12px"><div class="cap">Заметка</div><textarea id="note" data-id="${l.id}" placeholder="Что важно помнить">${esc(l.note||'')}</textarea></div>`};
 M.lead=(el,p)=>{const n=$('#note',el);if(!n)return;let t=0;const save=()=>{const l=getLead(p.id);if(l&&l.note!==n.value){l.note=n.value;api.update(l.id,{note:n.value}).catch(()=>{})}};n.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(save,700)});n.addEventListener('blur',save)};
 
+/* ---- team (owner home) ---- */
+const shortOf=t=>{const left=Math.max(0,t.tempo-t.sentToday),inQ=Math.min(t.backlog,left);return {left,inQ,short:left-inQ}};
+const alertHTML=t=>{const k=shortOf(t);
+  if(k.short>0)return `<div class="alert bad">${ic('cx',18,2)}<span>Не хватает ${k.short} лидов до плана</span></div>`;
+  if(k.left===0)return `<div class="alert ok">${ic('cok',18,2)}<span>План на сегодня выполнен</span></div>`;
+  return `<div class="alert ok">${ic('cok',18,2)}<span>Запаса хватает на сегодня</span></div>`};
+const tCard=t=>{const pct=Math.min(1,t.sentToday/Math.max(1,t.tempo)),mx=Math.max(1,t.tempo,...t.days);
+  return `<div class="card tcard"><button class="thead p" data-act="member" data-id="${t.id}">${avatar({name:t.name,avatar:t.photo},46)}<div class="tn"><b>${esc(t.name)}</b><span>Добавлял ${ago(t.lastAdded)}</span></div>${ic('chev',18,2)}</button>
+<div class="tm"><div><span>Отписал</span><b>${t.sentToday}<i>/${t.tempo}</i></b></div><div><span>Добавил</span><b>${t.addedToday}</b></div><div class="key"><span>В запасе</span><b>${t.backlog}</b></div></div>
+<div class="prog"><i style="transform:scaleX(${pct})"></i></div>${alertHTML(t)}
+<div class="dbars" aria-hidden="true">${t.days.map((v,i)=>`<i class="${i===t.days.length-1?'on':''}" style="height:${Math.max(8,v/mx*100)}%"></i>`).join('')}</div><div class="cap" style="margin-top:6px">Отписано за 7 дней</div></div>`};
+T.team=()=>{const tm=D.team||[],tot=tm.reduce((a,t)=>({s:a.s+t.sentToday,p:a.p+t.tempo,a:a.a+t.addedToday,b:a.b+t.backlog}),{s:0,p:0,a:0,b:0});
+  return `<div style="height:10px"></div><h1 class="title">Команда</h1><div class="sub">Сегодня, ${dlong(todayIn(tzOf()))}</div>
+${tm.length?`<div class="tiles"><div class="card tl"><span>Отписано</span><b>${tot.s}<i class="of">/${tot.p}</i></b></div><div class="card tl"><span>Добавлено</span><b>${tot.a}</b></div><div class="card tl"><span>В запасе</span><b>${tot.b}</b></div></div>
+<div id="tlist">${tm.map(tCard).join('')}</div>`:empty('Пока никого','Отправь сеттеру код команды '+D.me.code)}`};
+
 /* ---- settings ---- */
-T.settings=p=>{const me=D.me;return `${p.pushed?`<header class="top"><button class="roundbtn p" data-act="back" aria-label="Назад">${ic('back',20)}</button><div></div></header>`:'<div style="height:10px"></div>'}
+T.settings=p=>{const me=D.me,own=me.role==='owner';return `${p.pushed?`<header class="top"><button class="roundbtn p" data-act="back" aria-label="Назад">${ic('back',20)}</button><div></div></header>`:'<div style="height:10px"></div>'}
 <h1 class="title">Настройки</h1>
-<div class="card sec" style="margin-top:20px"><div class="between"><b style="font-size:17px">Темп в день</b><span class="cap" id="wk">${me.tempo*5} в неделю</span></div>
-<div class="stepper"><button class="sbtn p" data-act="tempo" data-d="-5" aria-label="Меньше">${ic('minus',22,2)}</button><div class="n" id="tv">${me.tempo}</div><button class="sbtn dark p" data-act="tempo" data-d="5" aria-label="Больше">${ic('plus',22,2)}</button></div>
-<div class="cap" style="margin-top:16px;line-height:1.45;font-weight:500">Столько лидов сеттер видит в очереди на день. Шкала на его главной считается от этого числа.</div></div>
-<div class="card" style="margin-top:12px;padding:4px 0">
- ${me.members.map(m=>`<div class="irow">${avatar({name:m.name,avatar:m.photo},44)}<div><b>${esc(m.name)}</b><div class="cap" style="font-weight:500">${m.role==='owner'?'Владелец':'Сеттер'}</div></div></div>`).join('')}
- <div class="irow"><span>Код команды</span><span class="r">${esc(me.code)}<button class="roundbtn p" style="width:36px;height:36px;box-shadow:none;background:var(--fill)" data-act="copycode" aria-label="Скопировать код">${ic('copy',16,2)}</button></span></div>
- <div class="irow"><span>Моя роль</span><span class="r" style="letter-spacing:0">${me.role==='owner'?'Владелец':'Сеттер'}</span></div></div>
+${own?'':`<div class="card sec" style="margin-top:20px"><div class="between"><b style="font-size:17px">План на день</b><span class="cap">${me.tempo*5} в неделю</span></div><div class="stepper"><div class="n">${me.tempo}</div></div><div class="cap" style="margin-top:16px;line-height:1.45;font-weight:500">Столько лидов видно в очереди на день. Число задает владелец.</div></div>`}
+<div class="card" style="margin-top:${own?20:12}px;padding:4px 0">
+ ${me.members.map(m=>own&&m.role==='setter'?`<button class="irow p" data-act="member" data-id="${m.id}">${avatar({name:m.name,avatar:m.photo},44)}<div style="text-align:left"><b>${esc(m.name)}</b><div class="cap" style="font-weight:500">Сеттер, ${m.tempo} в день</div></div><span class="r" style="color:var(--ink3)">${ic('chev',18,2)}</span></button>`:`<div class="irow">${avatar({name:m.name,avatar:m.photo},44)}<div><b>${esc(m.name)}</b><div class="cap" style="font-weight:500">${m.role==='owner'?'Владелец':'Сеттер'}</div></div></div>`).join('')}
+ ${own?`<div class="irow"><span>Код команды</span><span class="r">${esc(me.code)}<button class="roundbtn p" style="width:36px;height:36px;box-shadow:none;background:var(--fill)" data-act="copycode" aria-label="Скопировать код">${ic('copy',16,2)}</button></span></div>`:''}
+ <div class="irow"><span>Моя роль</span><span class="r" style="letter-spacing:0">${own?'Владелец':'Сеттер'}</span></div></div>
+${own?`<div class="hint">Новый сеттер выбирает роль Сеттер и вводит код. Имя и фото берутся из его Telegram. Нажми на сеттера, чтобы поменять имя или план на день.</div>`:''}
 <button class="btn danger p" style="margin-top:12px" data-act="leave">${ic('logout',19,2)}Выйти из команды</button>`};
 
 /* ---- setup ---- */
@@ -622,7 +684,7 @@ function mount(el,name,params,first){
 }
 function topEl(){return pushed.length?pushed[pushed.length-1].el:curEl}
 function setBack(){try{if(!TG||!TG.BackButton)return;pushed.length?TG.BackButton.show():TG.BackButton.hide()}catch(e){}}
-function drawTabs(){const t=TABS[D.me.role];tabbar.innerHTML=`<i class="thumb"></i>`+t.map(x=>`<button class="tab p" data-act="tab" data-v="${x[0]}">${ic(x[2],24,1.8)}${x[1]}</button>`).join('');tabbar.style.setProperty('--n',t.length)}
+function drawTabs(){const t=TABS[D.me.role];tabbar.innerHTML=`<i class="thumb"></i>`+t.map(x=>`<button class="tab p" data-act="tab" data-v="${x[0]}">${ic(x[2],24,1.8)}${x[1]}</button>`).join('');tabbar.style.setProperty('--n',t.length);tabbar.style.setProperty('--tw',t.length>3?'80px':'88px')}
 function markTab(name){const t=TABS[D.me.role],i=t.findIndex(x=>x[0]===name);tabbar.style.setProperty('--i',Math.max(0,i));$$('.tab',tabbar).forEach((b,k)=>b.classList.toggle('on',k===i))}
 
 async function go(name,instant){
@@ -672,20 +734,23 @@ function sheet(html,onMount){const bg=document.createElement('div'),sh=document.
 const sigs={};const same=(k,v)=>{const s=JSON.stringify(v);if(sigs[k]===s)return true;sigs[k]=s;return false};
 async function loadAll(){
   D.me=await api.me();
-  if(D.me.role==='setter'){const[q,r]=await Promise.all([api.queue(),api.statRows()]);D.queue=q;D.rows=r}
-  else{const[l,r]=await Promise.all([api.leads(),api.statRows()]);D.leads=l;D.rows=r;try{D.queue=null}catch(e){}}
-  same('q',D.queue);same('l',D.leads);same('r',D.rows);
+  if(D.me.role==='setter'){const[q,r]=await Promise.all([api.queue(),api.statRows()]);D.queue=q;D.rows=r;D.me.tempo=q.tempo}
+  else{const[l,r,t]=await Promise.all([api.leads(),api.statRows(),api.team()]);D.leads=l;D.rows=r;D.team=t;D.queue=null}
+  same('q',D.queue);same('l',D.leads);same('r',D.rows);same('t',D.team);
 }
 async function silentRefresh(force){
   if(!D.me||document.hidden||busy.size)return;
   const ae=document.activeElement;if(ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'))return;
+  const top=topEl();if(!top||document.querySelector('.sheet'))return;const n=top.dataset.name;
   try{
     let ch=false;
-    if(D.me.role==='setter'){const q=await api.queue();if(!same('q',q)){D.queue=q;ch=true}}
-    else{const l=await api.leads();if(!same('l',l)){D.leads=l;ch=true}}
-    const r=await api.statRows();if(!same('r',r)){D.rows=r;D.rowsV=(D.rowsV||0)+1;ch=true}
+    const get=async(k,fn,set)=>{const v=await fn();if(!same(k,v)){set(v);ch=true}};
+    const rows=()=>get('r',api.statRows,v=>{D.rows=v;D.rowsV=(D.rowsV||0)+1});
+    if(D.me.role==='setter'){await get('q',api.queue,v=>{D.queue=v;D.me.tempo=v.tempo});await rows()}
+    else if(n==='team'||n==='settings'){await get('t',api.team,v=>{D.team=v;v.forEach(t=>{const m=D.me.members.find(x=>x.id===t.id);if(m){m.tempo=t.tempo;m.name=t.name}})})}
+    else if(n==='leads'||n==='lead'){await get('l',api.leads,v=>{D.leads=v})}
+    else if(n==='stats'){await rows()}
     if(!ch&&!force)return;
-    const top=topEl();if(!top||document.querySelector('.sheet'))return;const n=top.dataset.name;
     if(n==='add'||n==='lead'||n==='settings')return;
     const sc=top.scrollTop;
     if(n==='queue'){refreshQueueUI()}else if(n==='leads'){refreshLeadsUI()}else{mount(top,n,top===curEl?{}:pushed[pushed.length-1].params,false);top.scrollTop=sc}
@@ -714,20 +779,59 @@ async function doUnsent(id){
   try{await api.setSent(id,false,null);api.statRows().then(r=>{D.rows=r;D.rowsV=(D.rowsV||0)+1}).catch(()=>{})}catch(e){toast('Нет связи')}
 }
 async function setLeadStatus(id,s,fromList){
-  const l=getLead(id);if(!l||l.status===s)return;const prev={status:l.status,reached:l.reached,status_at:l.status_at},c=D.leads.counts;hap('light');
+  const l=getLead(id);if(!l||l.status===s)return;const prev={status:l.status,reached:l.reached,status_at:l.status_at};hap('light');
   const rk={replied:1,dialog:2,call:3,client:4};
-  leadKeys(l).forEach(k=>{c[k]=Math.max(0,(c[k]||0)-1)});
   l.status=s;l.status_at=Date.now();if(rk[s])l.reached=Math.max(l.reached||0,rk[s]);
-  leadKeys(l).forEach(k=>{c[k]=(c[k]||0)+1});
   D.rowsV=(D.rowsV||0)+1;
   const req=api.setStatus(id,s).then(()=>api.statRows()).then(x=>{D.rows=x;D.rowsV=(D.rowsV||0)+1;same('r',x)});
   if(fromList){const row=$(`#llist [data-lead="${id}"]`);hnote('success');if(row&&!LF[D.filter](l))await collapse(row);refreshLeadsUI()}
-  req.catch(()=>{leadKeys(l).forEach(k=>{c[k]=Math.max(0,(c[k]||0)-1)});Object.assign(l,prev);leadKeys(l).forEach(k=>{c[k]=(c[k]||0)+1});toast('Нет связи, статус не сохранился');refreshLeadsUI()});
+  req.catch(()=>{Object.assign(l,prev);D.rowsV=(D.rowsV||0)+1;toast('Нет связи, статус не сохранился');refreshLeadsUI()});
+}
+/* edit lead: patch every local copy, then redraw what is on screen */
+function patchLocal(id,patch){[D.leads&&D.leads.rows,D.queue&&D.queue.todo,D.queue&&D.queue.done,D.recent].forEach(p=>p&&p.forEach(l=>{if(l.id===id)Object.assign(l,patch)}))}
+function dropLocal(id){if(D.queue){const t=D.queue.todo.length;D.queue.todo=D.queue.todo.filter(l=>l.id!==id);if(D.queue.todo.length<t)D.queue.backlog=Math.max(0,D.queue.backlog-1)}if(D.leads)D.leads.rows=D.leads.rows.filter(l=>l.id!==id);D.recent=D.recent.filter(l=>l.id!==id)}
+function redrawTop(){const top=topEl();if(!top)return;const n=top.dataset.name;
+  if(n==='queue')refreshQueueUI();else if(n==='leads')refreshLeadsUI();else if(n==='add'){const r=$('#recent',top);r&&(r.innerHTML=recentHTML());const b=$('#backlog',top);b&&D.queue&&(b.textContent=D.queue.backlog)}
+  else if(n==='lead'){const e=pushed[pushed.length-1];e&&mount(e.el,'lead',e.params,false)}else{const sc=top.scrollTop;mount(top,n,top===curEl?{}:pushed[pushed.length-1].params,false);top.scrollTop=sc}}
+function editLead(id){
+  const l=getLead(id);if(!l)return;const own=D.me.role==='owner',canDel=own||l.status==='new';
+  sheet(`<h3>Карточка лида</h3><div class="sub">Поменяй ник, добавь вторую соцсеть или исправь имя</div>
+<div class="card group" style="margin-top:14px;box-shadow:none;background:var(--fill)"><label class="field" style="height:58px"><span class="fic tg">${ic('tgf',20)}</span><input id="e-tg" value="${esc(l.tg||'')}" placeholder="Telegram, ник или ссылка" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label><div class="hair"></div><label class="field" style="height:58px"><span class="fic ig">${ic('ig',20,1.9)}</span><input id="e-ig" value="${esc(l.ig||'')}" placeholder="Instagram, ник или ссылка" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label><div class="hair"></div><label class="field" style="height:58px"><span class="fic" style="color:var(--ink2)">${ic('userplus',20)}</span><input id="e-nm" value="${esc(l.name||'')}" placeholder="Имя, если знаешь" autocomplete="off"></label></div>
+<div style="height:14px"></div><button class="btn p" id="esave">Сохранить</button>${canDel?`<button class="btn danger p" id="edel" style="margin-top:10px;box-shadow:none;height:52px;font-size:15px">${ic('trash',18,2)}Удалить лида</button>`:''}`,(sh,close)=>{
+    const g=k=>$('#e-'+k,sh).value;let armed=0;
+    $('#esave',sh).onclick=async()=>{
+      let t=parseHandle(g('tg')),i=parseHandle(g('ig'));
+      if(t&&t.kind==='ig'&&!i){i=t;t=null}else if(i&&i.kind==='tg'&&!t){t=i;i=null}
+      if(!t&&!i){hnote('error');toast('Нужен хотя бы один ник');return}
+      const patch={tg:t?t.name:'',ig:i?i.name:'',name:g('nm').trim()},oldTg=l.tg;
+      patchLocal(id,{tg:patch.tg||null,ig:patch.ig||null,name:patch.name||null});close();hnote('success');redrawTop();
+      try{await api.update(id,patch)}catch(e){toast('Нет связи, правка не сохранилась');return}
+      if(t&&t.name!==oldTg&&(!l.avatar||!patch.name)){api.tgProfile(t.name).then(r=>{const p={};if(r.avatar&&!l.avatar)p.avatar=r.avatar;if(r.name&&!l.name)p.name=r.name;if(p.avatar||p.name){patchLocal(id,p);redrawTop();api.update(id,p).catch(()=>{})}})}
+    };
+    const del=$('#edel',sh);if(del)del.onclick=async()=>{
+      if(!armed){armed=1;del.lastChild.textContent='Точно удалить?';del.style.color='#fff';del.style.background='#D92D20';hap('light');setTimeout(()=>{if(del.isConnected){armed=0;del.lastChild.textContent='Удалить лида';del.style.color='';del.style.background=''}},3000);return}
+      close();const onLead=topEl()&&topEl().dataset.name==='lead';dropLocal(id);hnote('warning');
+      if(onLead){await pop()}else redrawTop();
+      try{await api.delLead(id)}catch(e){toast('Нет связи, лид не удалился')}
+    };
+  });
+}
+function memberSheet(id){
+  const m=D.me.members.find(x=>x.id===id);if(!m)return;let tempo=m.tempo;
+  sheet(`<h3>${esc(m.name)}</h3><div class="sub">Имя и план на день для этого сеттера</div><input id="m-nm" value="${esc(m.name)}" placeholder="Имя" autocomplete="off">
+<div class="stepper" style="margin:6px 0 18px"><button class="sbtn p" data-d="-5" aria-label="Меньше">${ic('minus',22,2)}</button><div class="n" id="m-tv">${tempo}</div><button class="sbtn dark p" data-d="5" aria-label="Больше">${ic('plus',22,2)}</button></div><button class="btn p" id="msave">Сохранить</button>`,(sh,close)=>{
+    $$('.sbtn',sh).forEach(b=>b.onclick=()=>{const n=Math.max(5,Math.min(100,tempo+(+b.dataset.d)));if(n===tempo){hnote('warning');return}tempo=n;hap('light');const tv=$('#m-tv',sh);tv.textContent=n;tv.animate([{transform:'scale(1.12)'},{transform:'none'}],{duration:350,easing:EASE})});
+    $('#msave',sh).onclick=async()=>{const name=$('#m-nm',sh).value.trim()||m.name;m.name=name;m.tempo=tempo;if(D.team){const t=D.team.find(x=>x.id===id);if(t){t.name=name;t.tempo=tempo}}close();hnote('success');redrawTop();
+      try{await api.memberUpdate(id,name,tempo)}catch(e){toast('Нет связи, не сохранилось')}}
+  });
 }
 function segAct(t){const seg=t.closest('.seg');segSet(seg,t.dataset.v);hsel()}
 
 const ACT={
   tab:t=>go(t.dataset.v),
+  editlead:(t,e)=>{e.stopPropagation();editLead(t.dataset.id)},member:t=>memberSheet(t.dataset.id),
+  who:t=>{D.who=t.dataset.v;$$('#who .chip').forEach(b=>b.classList.toggle('on',b.dataset.v===D.who));hsel();const top=topEl(),n=top&&top.dataset.name;
+    if(n==='leads')refreshLeadsUI();else if(n==='stats'){const S=statsCached(D.period);D.S=S;const b=$('#sbody',top);b.innerHTML=statsBody(S,'owner');enhance(b,true)}},
   settings:()=>push('settings',{pushed:true}),
   add:()=>go('add'),queue:()=>go('queue'),statspush:()=>push('stats',{pushed:true}),back:()=>pop(),
   qtab:t=>{D.qtab=t.dataset.v;segAct(t);const l=$('#qlist');l.animate([{opacity:0,transform:'translate3d(0,10px,0)'},{opacity:1,transform:'none'}],{duration:380,easing:EASE});l.innerHTML=qList()},
@@ -741,7 +845,6 @@ const ACT={
   setstatus:t=>{const id=t.closest('#sgrid').dataset.id,s=t.dataset.v;$$('#sgrid .sb').forEach(b=>b.classList.toggle('on',b===t));const idx=ORDER.indexOf(s);$$('#steps i').forEach((i,k)=>i.classList.toggle('on',s!=='lost'&&k<=idx));$('#stl').textContent=STATUS[s];setLeadStatus(id,s,false)},
   followers:t=>{const l=getLead(t.dataset.id);sheet(`<h3>Подписчики</h3><div class="sub">Можно писать 8200 или 8,2к</div><input id="fin" inputmode="decimal" placeholder="Например 8,2к" value="${l.followers||''}" autocomplete="off"><button class="btn p" id="fsave">Сохранить</button>`,(sh,close)=>{const i=$('#fin',sh);setTimeout(()=>i.focus(),350);$('#fsave',sh).onclick=async()=>{const n=parseNum(i.value);if(n==null&&i.value.trim()){hnote('error');return}l.followers=n;close();const f=$('#fol');if(f)f.textContent=n?fmtK(n)+' подписчиков':'Указать подписчиков';hnote('success');try{await api.update(l.id,{followers:n==null?'':n})}catch(e){toast('Нет связи')}}})},
   addsocial:t=>{const l=getLead(t.dataset.id),ch=t.dataset.ch;sheet(`<h3>${ch==='tg'?'Telegram':'Instagram'} лида</h3><div class="sub">Ник или ссылка</div><input id="sin" placeholder="@ник или ссылка" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn p" id="ssave">Добавить</button>`,(sh,close)=>{const i=$('#sin',sh);setTimeout(()=>i.focus(),350);$('#ssave',sh).onclick=async()=>{const p=parseHandle(i.value);if(!p){hnote('error');return}const k=p.kind||ch;l[k]=p.name;close();hnote('success');try{await api.update(l.id,{[k]:p.name})}catch(e){toast('Нет связи')}const top=pushed[pushed.length-1];if(top)mount(top.el,'lead',top.params,false)}})},
-  tempo:async t=>{const me=D.me,n=Math.max(5,Math.min(60,me.tempo+(+t.dataset.d)));if(n===me.tempo){hnote('warning');return}me.tempo=n;hap('light');$('#tv').textContent=n;$('#wk').textContent=n*5+' в неделю';$('#tv').animate([{transform:'scale(1.12)'},{transform:'none'}],{duration:350,easing:EASE});try{await api.setTempo(n);if(me.role==='setter'){D.queue=await api.queue();same('q',D.queue)}}catch(e){toast('Нет связи')}},
   copycode:()=>{try{navigator.clipboard.writeText(D.me.code)}catch(e){}hnote('success');toast('Код скопирован')},
   leave:()=>sheet(`<h3>Выйти из команды?</h3><div class="sub">Придется ввести код заново. Лиды останутся в базе.</div><div style="height:16px"></div><button class="btn p" id="lyes" style="background:#D92D20">Выйти</button>`,(sh,close)=>{$('#lyes',sh).onclick=async()=>{close();await api.leave();location.reload()}}),
   /* setup */
