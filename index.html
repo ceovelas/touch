@@ -186,9 +186,8 @@ button.lrow:active,.lrow.p:active{transform:scale(.985)}
 .plate{position:relative;overflow:hidden;border-radius:26px;padding:16px;color:#fff;display:flex;flex-direction:column;gap:4px;min-height:176px}
 .plate.tg{background:var(--tgGrad);box-shadow:0 14px 24px -14px rgba(20,106,158,.65)}
 .plate.ig{background:var(--igGrad);box-shadow:0 14px 24px -14px rgba(180,36,90,.6)}
-.plate::after{content:"";position:absolute;right:-34px;top:-34px;width:128px;height:128px;border-radius:50%;background:rgba(255,255,255,.12)}
 .plate .hd{position:relative;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;z-index:1}
-.plate .hd .bd{--s:28px;background:rgba(255,255,255,.22)}
+.plate .hd .bd{--s:26px;background:none}
 .plate .v{position:relative;z-index:1;font-weight:700;font-size:44px;letter-spacing:-1.8px;line-height:1.05;margin-top:auto;font-variant-numeric:tabular-nums}
 .plate .s{position:relative;z-index:1;font-size:13px;font-weight:600;color:rgba(255,255,255,.82)}
 .plate .tr{position:relative;z-index:1;height:6px;border-radius:4px;background:rgba(255,255,255,.28);margin-top:8px;overflow:hidden}
@@ -238,11 +237,11 @@ button.lrow:active,.lrow.p:active{transform:scale(.985)}
 .profile b{font-size:19px;letter-spacing:-.4px;display:block}.profile span{font-size:13px;font-weight:500;color:var(--ink2)}
 
 /* liquid glass tab bar */
-.tabbar{--tw:84px;position:absolute;left:50%;bottom:calc(14px + var(--sb));transform:translateX(-50%);display:flex;padding:6px;border-radius:36px;
+.tabbar{--tw:84px;position:absolute;left:0;right:0;margin:0 auto;width:max-content;bottom:calc(14px + var(--sb));transform:translateZ(0);display:flex;padding:6px;border-radius:36px;
   background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.44));-webkit-backdrop-filter:blur(26px) saturate(200%);backdrop-filter:blur(26px) saturate(200%);
   box-shadow:0 0 0 .5px rgba(17,17,19,.09),0 16px 36px -12px rgba(17,17,19,.28),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.4),inset 0 0 18px rgba(255,255,255,.35);
   z-index:20;touch-action:none;-webkit-user-select:none;user-select:none;transition:transform .5s var(--ease),opacity .3s}
-.tabbar.hide{transform:translate(-50%,130px);opacity:0;pointer-events:none}
+.tabbar.hide{transform:translate3d(0,130px,0);opacity:0;pointer-events:none}
 .tabbar .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:var(--tw);border-radius:30px;
   background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.72));
   box-shadow:0 0 0 .5px rgba(17,17,19,.07),0 4px 12px -2px rgba(17,17,19,.14),inset 0 1px 0 #fff;
@@ -697,10 +696,13 @@ function topEl(){return pushed.length?pushed[pushed.length-1].el:curEl}
 function setBack(){try{if(!TG||!TG.BackButton)return;pushed.length?TG.BackButton.show():TG.BackButton.hide()}catch(e){}}
 
 /* ============ liquid glass tab bar ============ */
-const TW=84,TMAX=(TABS.length-1)*TW;
+let TW=84,TMAX=(TABS.length-1)*TW;
+const fitTabs=()=>{TW=Math.max(60,Math.min(84,Math.floor((app.clientWidth-44-12)/TABS.length)));TMAX=(TABS.length-1)*TW;tabbar.style.setProperty('--tw',TW+'px');if(curTab&&thumbEl())markTab(curTab)};
+addEventListener('resize',()=>fitTabs());
 const tabIdx=()=>Math.max(0,TABS.findIndex(x=>x[0]===curTab));
 const thumbEl=()=>tabbar.querySelector('.thumb');
-function drawTabs(){tabbar.innerHTML=`<i class="thumb"></i>`+TABS.map(x=>`<button class="tab" data-v="${x[0]}" aria-label="${x[1]}">${ic(x[2],24,1.8)}${x[1]}</button>`).join('');tabbar.style.setProperty('--tw',TW+'px')}
+function fitTabs0(){TW=Math.max(60,Math.min(84,Math.floor((app.clientWidth-44-12)/TABS.length)));TMAX=(TABS.length-1)*TW;tabbar.style.setProperty('--tw',TW+'px')}
+function drawTabs(){tabbar.innerHTML=`<i class="thumb"></i>`+TABS.map(x=>`<button class="tab" data-v="${x[0]}" aria-label="${x[1]}">${ic(x[2],24,1.8)}${x[1]}</button>`).join('');fitTabs0()}
 function paintTabs(i){$$('.tab',tabbar).forEach((b,k)=>b.classList.toggle('on',k===i))}
 function markTab(name){const i=Math.max(0,TABS.findIndex(x=>x[0]===name));const t=thumbEl();t.style.setProperty('--x',i*TW+'px');t.style.setProperty('--sx',1);t.style.setProperty('--sy',1);paintTabs(i)}
 (function(){
