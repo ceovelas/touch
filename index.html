@@ -299,6 +299,10 @@ button.lrow:active,.lrow.p:active{transform:scale(.985)}
 @media (min-width:521px){#app{box-shadow:0 0 0 1px rgba(0,0,0,.06),0 30px 80px rgba(0,0,0,.12)}}
 .still *{animation:none!important}
 
+.quick.add{display:inline-flex;align-items:center;gap:5px;background:#fff;color:var(--ink);box-shadow:var(--shb);height:34px;padding:0 12px;border-radius:999px;font-weight:700;font-size:13px;flex:none}
+.li2{width:34px;height:34px;border-radius:50%;background:var(--fill);display:grid;place-items:center;color:var(--ink2);flex:none}
+.pillw{display:inline-flex;align-items:center;gap:6px}
+
 </style>
 </head>
 <body>
@@ -433,6 +437,7 @@ const remote={
   setSent:(id,sent,ch)=>rpc('touch_set_sent',{p_token:TOKEN,p_id:id,p_sent:sent,p_channel:ch||null}),
   setAgain:(id,on,ch)=>rpc('touch_set_again',{p_token:TOKEN,p_id:id,p_on:on,p_channel:ch||null}),
   leads:()=>rpc('touch_leads',{p_token:TOKEN}),
+  backlog:()=>rpc('touch_backlog',{p_token:TOKEN}),
   statRows:()=>rpc('touch_stat_rows',{p_token:TOKEN}),
   setStatus:(id,s)=>rpc('touch_set_status',{p_token:TOKEN,p_id:id,p_status:s}),
   update:(id,patch)=>rpc('touch_update_lead',{p_token:TOKEN,p_id:id,p_patch:patch}),
@@ -481,6 +486,7 @@ const demo={
   async setSent(id,sent,ch){const l=DB.leads.find(x=>x.id===id);if(!l)return null;if(sent&&l.status==='new'){l.status='sent';l.sent_at=Date.now();l.channel=ch||(l.tg?'tg':'ig');l.status_at=Date.now()}else if(!sent&&l.status==='sent'){l.status='new';l.sent_at=null;l.channel=null;l.again_at=null;l.status_at=null}dsave();return l},
   async setAgain(id,on,ch){const l=DB.leads.find(x=>x.id===id);if(!l)return null;if(on&&l.status==='sent'&&!l.again_at){l.again_at=Date.now();l.again_channel=ch||l.channel}else if(!on){l.again_at=null;l.again_channel=null}dsave();return l},
   async leads(){return {rows:DB.leads.filter(l=>l.status!=='new').sort((a,b)=>(b.status_at||b.sent_at)-(a.status_at||a.sent_at)).slice(0,3000)}},
+  async backlog(){return {rows:DB.leads.filter(l=>l.status==='new').sort((a,b)=>a.created_at-b.created_at)}},
   async statRows(){return DB.leads.filter(l=>l.sent_at).map(l=>[dday(l.sent_at),l.channel||'tg',l.reached])},
   async setStatus(id,s){const l=DB.leads.find(x=>x.id===id);const rk={replied:1,dialog:2,call:3,client:4};l.status=s;if(s in rk)l.reached=Math.max(l.reached,rk[s]);l.status_at=Date.now();dsave();return l},
   async update(id,p){const l=DB.leads.find(x=>x.id===id);for(const k in p){l[k]=p[k]===''?null:p[k]}dsave();return l},
@@ -604,7 +610,7 @@ function parseList(txt,kind){
   return out;
 }
 T.add=()=>`
-<header class="top">${backBtn}<div class="pillw">В запасе <b id="backlog">${D.queue?D.queue.backlog:0}</b></div></header>
+<header class="top">${backBtn}<button class="pillw p" data-act="backlog">В запасе <b id="backlog">${D.queue?D.queue.backlog:0}</b> ${ic('chev',14,2.4)}</button></header>
 <h1 class="title">Добавить лидов</h1><div class="sub">Вставь список или один ник, ссылки тоже подходят</div>
 ${segHTML('kind',[['tg','Telegram'],['ig','Instagram']],D.kind)}
 <div class="hint" style="margin:-4px 6px 12px">Ники без ссылки считаются выбранной соцсетью</div>
@@ -634,6 +640,12 @@ M.add=el=>{
     if(fail===n){hnote('error');toast('Нет связи, не добавилось')}else{hnote('success');toast(`Добавлено ${n-fail}`)}};
   setTimeout(()=>{try{ta.focus()}catch(e){}},520);
 };
+
+/* ============ backlog (edit leads that were not written yet) ============ */
+const bRow=l=>{const miss=!l.tg?'tg':!l.ig?'ig':'';return `<div class="lrow p" role="button" tabindex="0" data-act="editlead" data-id="${l.id}" data-lead="${l.id}" data-focus="${miss}">${avatar(l,48)}<div class="lmain"><div class="lname">${esc(leadName(l))}</div><div class="chs">${chipHTML(l,'tg',false)}${chipHTML(l,'ig',false)}</div></div>${miss?`<span class="quick add p" aria-hidden="true">${ic('plus',14,2.6)}${miss==='tg'?'Telegram':'Instagram'}</span>`:`<span class="li2">${ic('edit',16,2)}</span>`}</div>`};
+const bList=()=>{const r=(D.backlogRows||[]);return r.length?r.map(bRow).join(''):empty('Запас пуст','Добавь лидов, и они появятся здесь')};
+T.backlog=()=>`<header class="top">${backBtn}<div></div></header><h1 class="title">В запасе</h1><div class="sub" id="bsub">${(D.backlogRows||[]).length} лидов, нажми на лида, чтобы изменить</div><div class="list" id="blist" style="margin-top:16px">${bList()}</div>`;
+function refreshBacklogUI(){const el=$('.screen[data-name="backlog"]');if(!el)return;$('#blist',el).innerHTML=bList();$('#bsub',el).textContent=`${(D.backlogRows||[]).length} лидов, нажми на лида, чтобы изменить`;el.classList.add('still')}
 
 /* ============ stats ============ */
 const shades=['#111113','#2E2E33','#55555B','#8A8A91','#B9B9BF'];
@@ -789,7 +801,7 @@ async function silentRefresh(force){
   if(!D.me||document.hidden||busy.size)return;
   const ae=document.activeElement;if(ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'))return;
   const top=topEl();if(!top||document.querySelector('.sheet'))return;const n=top.dataset.name;
-  if(n==='settings'||n==='add'||n==='lead')return;
+  if(n==='settings'||n==='add'||n==='lead'||n==='backlog')return;
   try{
     let ch=false;
     const get=async(k,fn,set)=>{const v=await fn();if(!same(k,v)){set(v);ch=true}};
@@ -840,19 +852,19 @@ async function setLeadStatus(id,s,fromList){
   if(fromList){const row=$(`#llist [data-lead="${id}"]`);hnote('success');if(row&&!LF[D.filter](l))await collapse(row);refreshLeadsUI()}
   req.catch(()=>{patchLocal(id,prev);D.rowsV=(D.rowsV||0)+1;toast('Нет связи, статус не сохранился');redrawTop()});
 }
-function patchLocal(id,patch){[D.leads&&D.leads.rows,D.queue&&D.queue.todo,D.queue&&D.queue.again,D.queue&&D.queue.done].forEach(p=>p&&p.forEach(l=>{if(l.id===id)Object.assign(l,patch)}))}
-function dropLocal(id){const q=D.queue;if(q){const t=q.todo.length;q.todo=q.todo.filter(l=>l.id!==id);if(q.todo.length<t)q.backlog=Math.max(0,q.backlog-1);q.again=q.again.filter(l=>l.id!==id);q.done=q.done.filter(l=>l.id!==id)}if(D.leads)D.leads.rows=D.leads.rows.filter(l=>l.id!==id)}
+function patchLocal(id,patch){[D.backlogRows,D.leads&&D.leads.rows,D.queue&&D.queue.todo,D.queue&&D.queue.again,D.queue&&D.queue.done].forEach(p=>p&&p.forEach(l=>{if(l.id===id)Object.assign(l,patch)}))}
+function dropLocal(id){const q=D.queue;if(q){const t=q.todo.length;q.todo=q.todo.filter(l=>l.id!==id);if(q.todo.length<t)q.backlog=Math.max(0,q.backlog-1);q.again=q.again.filter(l=>l.id!==id);q.done=q.done.filter(l=>l.id!==id)}if(D.leads)D.leads.rows=D.leads.rows.filter(l=>l.id!==id);if(D.backlogRows)D.backlogRows=D.backlogRows.filter(l=>l.id!==id)}
 function redrawTop(){const top=topEl();if(!top)return;const n=top.dataset.name;
-  if(n==='queue')refreshQueueUI();else if(n==='leads')refreshLeadsUI();else if(n==='add'){const b=$('#backlog',top);b&&D.queue&&(b.textContent=D.queue.backlog)}
+  if(n==='queue')refreshQueueUI();else if(n==='leads')refreshLeadsUI();else if(n==='backlog')refreshBacklogUI();else if(n==='add'){const b=$('#backlog',top);b&&D.queue&&(b.textContent=D.queue.backlog)}
   else if(n==='lead'){const e=pushed[pushed.length-1];e&&mount(e.el,'lead',e.params,false)}
   else if(n==='settings'){}
   else{const sc=top.scrollTop;mount(top,n,top===curEl?{}:pushed[pushed.length-1].params,false);top.scrollTop=sc}}
-function editLead(id){
+function editLead(id,focus){
   const l=getLead(id);if(!l)return;
   sheet(`<h3>Изменить лида</h3><div class="sub">Поменяй ник, добавь вторую соцсеть или исправь имя</div>
 <div class="grp"><label class="field"><span class="fi">${badge('tg',26)}</span><input id="e-tg" value="${esc(l.tg||'')}" placeholder="Telegram, ник или ссылка" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label><div class="hair"></div><label class="field"><span class="fi">${badge('ig',26)}</span><input id="e-ig" value="${esc(l.ig||'')}" placeholder="Instagram, ник или ссылка" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label><div class="hair"></div><label class="field"><span class="fi">${ic('user',20,2)}</span><input id="e-nm" value="${esc(l.name||'')}" placeholder="Имя, если знаешь" autocomplete="off"></label></div>
 <div style="height:14px"></div><button class="btn p" id="esave">Сохранить</button><button class="btn danger p sm" id="edel" style="margin-top:10px">${ic('trash',18,2)}<span>Удалить лида</span></button>`,(sh,close)=>{
-    const g=k=>$('#e-'+k,sh).value;let armed=0;
+    const g=k=>$('#e-'+k,sh).value;let armed=0;if(focus&&$('#e-'+focus,sh))setTimeout(()=>$('#e-'+focus,sh).focus(),380);
     $('#esave',sh).onclick=async()=>{
       let t=parseHandle(g('tg')),i=parseHandle(g('ig'));
       if(t&&t.kind==='ig'&&!i){i=t;t=null}else if(i&&i.kind==='tg'&&!t){t=i;i=null}
@@ -885,7 +897,8 @@ async function silentRefreshQ(){try{const v=await api.queue();if(!same('q',v)){D
 const ACT={
   tab:t=>go(t.dataset.v),
   settings:()=>push('settings'),add:()=>push('add'),back:()=>pop(),
-  editlead:t=>editLead(t.dataset.id),
+  editlead:t=>editLead(t.dataset.id,t.dataset.focus),
+  backlog:async()=>{try{D.backlogRows=(await api.backlog()).rows}catch(e){D.backlogRows=D.backlogRows||[];toast('Нет связи')}push('backlog')},
   sent:t=>doSent(t.dataset.id,t.dataset.kind),unsent:t=>doUnsent(t.dataset.id),
   open:(t,e)=>{e.stopPropagation();hap('light');D.opened[t.dataset.id]=t.dataset.ch;openCh(t.dataset.ch,t.dataset.u)},
   lead:t=>push('lead',{id:t.dataset.id}),
