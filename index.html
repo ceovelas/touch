@@ -374,7 +374,8 @@ const TONES=[['#E7E3DD','#8A8378'],['#DDE3E8','#74808B'],['#EADFD6','#97806B'],[
 const hash=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h};
 const initials=n=>{const p=String(n||'?').replace(/^@/,'').trim().split(/[\s._]+/).filter(Boolean);return ((p[0]||'?')[0]+(p[1]?p[1][0]:'')).toUpperCase()};
 const leadName=l=>l.name||('@'+(l.tg||l.ig||'?'));
-const avatar=(l,s=48)=>{const t=TONES[hash(l.name||l.tg||l.ig||'x')%TONES.length];return `<div class="av" style="--s:${s}px;background:${t[0]};color:${t[1]}"><span>${esc(initials(l.name||l.tg||l.ig))}</span>${l.avatar?`<img src="${esc(l.avatar)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">`:''}</div>`};
+const picOf=l=>l.avatar||(l.tg&&/^[A-Za-z0-9_]{4,}$/.test(l.tg)?'https://t.me/i/userpic/320/'+l.tg+'.jpg':'');
+const avatar=(l,s=48)=>{const t=TONES[hash(l.name||l.tg||l.ig||'x')%TONES.length];return `<div class="av" style="--s:${s}px;background:${t[0]};color:${t[1]}"><span>${esc(initials(l.name||l.tg||l.ig))}</span>${picOf(l)?`<img src="${esc(picOf(l))}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">`:''}</div>`};
 const ago=t=>{if(!t)return 'еще не было';const m=Math.max(0,Math.round((Date.now()-t)/6e4));if(m<1)return 'только что';if(m<60)return m+' мин назад';const h=Math.round(m/60);if(h<24)return h+' ч назад';return Math.round(h/24)+' дн назад'};
 const MON=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 const WD=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
